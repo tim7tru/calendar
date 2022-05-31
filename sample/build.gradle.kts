@@ -3,14 +3,14 @@ plugins {
     id("kotlin-android")
 }
 
-val composeVersion = "1.0.1"
+val composeVersion = "1.1.1"
 
 android {
     compileSdk = 31
 
     defaultConfig {
         applicationId = "com.timmytruong.calendar"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 31
         versionCode = 1
         versionName = "1.0"
@@ -53,6 +53,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":library"))
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("com.google.android.material:material:1.6.0")
