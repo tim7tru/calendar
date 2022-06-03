@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.timmytruong.library.extension.reverseWithIndices
-import com.timmytruong.library.month.DAYS_IN_WEEK
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.*

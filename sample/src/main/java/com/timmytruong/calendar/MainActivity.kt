@@ -14,7 +14,8 @@ import androidx.compose.material.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.timmytruong.calendar.ui.theme.CalendarTheme
-import com.timmytruong.library.calendar.SimpleCalendar
+import com.timmytruong.library.calendar.DateSelection
+import com.timmytruong.library.calendar.SimpleMonthCalendar
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -33,12 +34,13 @@ class MainActivity : ComponentActivity() {
                 Surface(color = MaterialTheme.colors.background) {
                     Column {
                         Text(modifier = Modifier.padding(8.dp), text = "Simple Calendar")
-                        SimpleCalendar(
-                            titleModifier = Modifier.padding(8.dp),
+                        SimpleMonthCalendar(
                             yearMonth = YearMonth.now(),
                             startingDay = DayOfWeek.SUNDAY,
-                            onDaySelected = ::showDayToast,
-                            selectedDate = viewModel.selectedDate
+                            dateSelection = DateSelection.SingleDay(
+                                onDaySelected = ::onDaySelected,
+                                selectedDate = viewModel.selectedDate
+                            )
                         )
                     }
                 }
@@ -46,7 +48,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun showDayToast(date: LocalDate) {
+    private fun onDaySelected(date: LocalDate) {
         Toast.makeText(this, date.format(DateTimeFormatter.BASIC_ISO_DATE), Toast.LENGTH_SHORT).show()
         viewModel.onDaySelected(date)
     }
