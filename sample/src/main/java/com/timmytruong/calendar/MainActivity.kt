@@ -6,8 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -33,13 +36,22 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     Column {
-                        Text(modifier = Modifier.padding(8.dp), text = "Simple Calendar")
+                        Text(modifier = Modifier.padding(8.dp), text = "Simple Single-Day Select Calendar")
                         SimpleMonthCalendar(
                             yearMonth = YearMonth.now(),
                             startingDay = DayOfWeek.SUNDAY,
                             dateSelection = DateSelection.SingleDay(
+                                onDaySelected = { onDaySelected(it) },
+                                initial = viewModel.initialDate
+                            )
+                        )
+                        Text(modifier = Modifier.padding(8.dp), text = "Simple Multi-Day Select Calendar")
+                        SimpleMonthCalendar(
+                            yearMonth = YearMonth.now(),
+                            startingDay = DayOfWeek.SUNDAY,
+                            dateSelection = DateSelection.MultipleDay(
                                 onDaySelected = ::onDaySelected,
-                                selectedDate = viewModel.selectedDate
+                                initial = listOf(viewModel.initialDate)
                             )
                         )
                     }
@@ -50,6 +62,10 @@ class MainActivity : ComponentActivity() {
 
     private fun onDaySelected(date: LocalDate) {
         Toast.makeText(this, date.format(DateTimeFormatter.BASIC_ISO_DATE), Toast.LENGTH_SHORT).show()
-        viewModel.onDaySelected(date)
+    }
+
+    private fun onDaySelected(date: LocalDate, selectedDates: List<LocalDate>) {
+        Toast.makeText(this, date.format(DateTimeFormatter.BASIC_ISO_DATE), Toast.LENGTH_SHORT).show()
+        selectedDates.forEach { println(it) }
     }
 }
