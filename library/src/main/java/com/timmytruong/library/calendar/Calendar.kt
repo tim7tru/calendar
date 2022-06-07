@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import com.timmytruong.library.calendar.selection.DateSelection
+import com.timmytruong.library.calendar.selection.MultipleDaySelectionCalendar
 import com.timmytruong.library.calendar.selection.RangeSelectionCalendar
+import com.timmytruong.library.calendar.selection.SingleDaySelectionCalendar
 import com.timmytruong.library.core.Title
 import com.timmytruong.library.core.TitleData
 import java.time.DayOfWeek

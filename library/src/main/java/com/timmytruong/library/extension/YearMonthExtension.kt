@@ -5,7 +5,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 
-internal fun YearMonth.toDayData(startingDay: DayOfWeek): List<LocalDate?> = mutableListOf<LocalDate?>().apply {
+internal fun YearMonth.toDays(startingDay: DayOfWeek): List<LocalDate?> = mutableListOf<LocalDate?>().apply {
     val startOfMonth = LocalDate.of(year, month, 1)
     val endOfMonth = LocalDate.of(year, month, startOfMonth.lengthOfMonth())
 

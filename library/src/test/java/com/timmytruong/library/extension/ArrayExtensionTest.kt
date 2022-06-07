@@ -3,7 +3,7 @@ package com.timmytruong.library.extension
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
-class ArrayExtensionsTest {
+class ArrayExtensionTest {
 
     @Test
     fun `Given empty array, when reverseWithIndices is called, then array is not modified`() {

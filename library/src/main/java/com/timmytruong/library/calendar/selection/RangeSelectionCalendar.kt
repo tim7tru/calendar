@@ -15,7 +15,6 @@ import com.timmytruong.library.extension.*
 import com.timmytruong.library.extension.isBetween
 import com.timmytruong.library.extension.isSelected
 import com.timmytruong.library.extension.isValidRange
-import com.timmytruong.library.extension.toDayData
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -38,7 +37,7 @@ fun RangeSelectionCalendar(
     LazyVerticalGrid(
         cells = GridCells.Fixed(DAYS_IN_WEEK),
         content = {
-            items(yearMonth.toDayData(startingDay)) { item ->
+            items(yearMonth.toDays(startingDay)) { item ->
                 item?.let { date ->
                     SimpleDayTile(
                         data = DayData(
