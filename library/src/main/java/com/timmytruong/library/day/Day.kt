@@ -14,7 +14,8 @@ import java.time.LocalDate
 internal data class DayData(
     val date: LocalDate,
     val isSelected: Boolean = false,
-    val dayClicks: () -> Unit
+    val dayClicks: (() -> Unit)? = null
+
 )
 
 @Composable
@@ -29,18 +30,25 @@ internal fun EmptyDayTile() {
 
 @Composable
 internal fun SimpleDayTile(data: DayData) {
+    var modifier = Modifier
+        .padding(all = 8.dp)
+        .drawBehind {
+            if (data.isSelected) drawCircle(color = Color.Red)
+            else drawCircle(color = Color.Transparent)
+        }
+
+    if (data.dayClicks != null) {
+        modifier = Modifier.clickable { data.dayClicks.invoke() }.then(modifier)
+    }
+
     with(data) {
         Text(
             text = "${date.dayOfMonth}",
             color = Color.White,
-            modifier = Modifier
-                .padding(all = 8.dp)
-                .drawBehind {
-                    if (data.isSelected) drawCircle(color = Color.Red)
-                    else drawCircle(color = Color.Transparent)
-                }
-                .clickable { data.dayClicks.invoke() },
+            modifier = modifier,
             textAlign = TextAlign.Center
         )
     }
 }
+
+
