@@ -10,8 +10,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.timmytruong.library.calendar.DateSelection
-import com.timmytruong.library.calendar.SimpleMonthCalendar
+import com.timmytruong.library.calendar.Calendar
+import com.timmytruong.library.calendar.selection.DateSelection
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -23,7 +23,8 @@ enum class SampleScreen(
     HOME({ Home(it) }),
     STATIC_CALENDAR({ StaticCalendar() }),
     SINGLE_SELECTION({ SingleSelectionCalendar() }),
-    MULTI_SELECTION({ MultiSelectionCalendar() });
+    MULTI_SELECTION({ MultiSelectionCalendar() }),
+    RANGE_SELECTION({ RangeSelectionCalendar() });
 }
 
 @ExperimentalFoundationApi
@@ -42,14 +43,14 @@ fun Home(navController: NavController) {
 
 @ExperimentalFoundationApi
 @Composable
-private fun StaticCalendar() { SimpleMonthCalendar(yearMonth = YearMonth.now()) }
+private fun StaticCalendar() { Calendar(yearMonth = YearMonth.now()) }
 
 @ExperimentalFoundationApi
 @Composable
 private fun SingleSelectionCalendar() {
     val context = LocalContext.current
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    SimpleMonthCalendar(
+    Calendar(
         yearMonth = YearMonth.now(),
         dateSelection = DateSelection.SingleDay(
             initial = selectedDate,
@@ -64,7 +65,7 @@ private fun SingleSelectionCalendar() {
 private fun MultiSelectionCalendar() {
     val context = LocalContext.current
     val selectedDates = remember { mutableStateListOf(LocalDate.now()) }
-    SimpleMonthCalendar(
+    Calendar(
         yearMonth = YearMonth.now(),
         dateSelection = DateSelection.MultipleDay(
             initial = selectedDates,
@@ -76,6 +77,22 @@ private fun MultiSelectionCalendar() {
         )
     )
 }
+
+@ExperimentalFoundationApi
+@Composable
+private fun RangeSelectionCalendar() {
+    val context = LocalContext.current
+    val now = LocalDate.now()
+    val selectedDates = remember { LocalDate.of(now.year, now.month, 1) to LocalDate.of(now.year, now.month, 7) }
+    Calendar(
+        yearMonth = YearMonth.now(),
+        dateSelection = DateSelection.Range(
+            initial = selectedDates,
+            onDaySelected = { it.showToast(context) },
+        )
+    )
+}
+
 
 private fun LocalDate.showToast(context: Context) {
     Toast.makeText(context, format(DateTimeFormatter.ISO_LOCAL_DATE), Toast.LENGTH_SHORT).show()
