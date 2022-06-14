@@ -4,8 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,10 +27,18 @@ class MainActivity : ComponentActivity() {
 fun CalendarApp() {
     CalendarTheme {
         val navController = rememberNavController()
-        Surface(color = MaterialTheme.colors.background) {
-            NavHost(navController = navController, startDestination = SampleScreen.HOME.name) {
-                SampleScreen.values().forEach { screen ->
-                    composable(screen.name) { screen.body(navController) }
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(navController.currentDestination?.displayName ?: "") })
+            }
+        ) {
+            Surface(color = MaterialTheme.colors.background) {
+
+                NavHost(navController = navController, startDestination = SampleScreen.HOME.name) {
+                    SampleScreen.values().forEach { screen ->
+                        composable(screen.name) { screen.body(navController) }
+                    }
                 }
             }
         }

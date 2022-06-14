@@ -6,8 +6,13 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import com.timmytruong.library.core.CalendarTextData
 import com.timmytruong.library.extension.reverseWithIndices
 import java.time.DayOfWeek
 import java.time.format.TextStyle
@@ -15,15 +20,22 @@ import java.util.*
 
 @ExperimentalFoundationApi
 @Composable
-fun DayOfWeekHeader(startingDay: DayOfWeek) {
+fun DayOfWeekHeader(
+    startingDay: DayOfWeek,
+    textData: CalendarTextData?
+) {
+    val daysOfWeek = remember(startingDay) { getDaysOfWeek(startingDay) }
     LazyVerticalGrid(
         cells = GridCells.Fixed(DAYS_IN_WEEK),
         content = {
-            items(getDaysOfWeek(startingDay)) { item ->
+            items(daysOfWeek) { item ->
                 Text(
                     text = item.getDisplayName(TextStyle.NARROW, Locale.getDefault()),
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold
+                    modifier = textData?.modifier ?: Modifier,
+                    fontSize = textData?.fontSize ?: 24.sp,
+                    textAlign = textData?.textAlign ?: TextAlign.Center,
+                    fontWeight = textData?.fontWeight ?: FontWeight.Bold,
+                    color = textData?.textColor ?: Color.White,
                 )
             }
         }
