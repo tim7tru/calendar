@@ -3,28 +3,34 @@ package com.timmytruong.calendar
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.timmytruong.library.calendar.Calendar
 import com.timmytruong.library.calendar.selection.DateSelection
+import com.timmytruong.library.core.ComposableTextData
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
 @ExperimentalFoundationApi
-enum class SampleScreen(
-    val body: @Composable (NavController) -> Unit
-) {
+enum class SampleScreen(val body: @Composable (NavController) -> Unit) {
     HOME({ Home(it) }),
     STATIC_CALENDAR({ StaticCalendar() }),
     SINGLE_SELECTION({ SingleSelectionCalendar() }),
     MULTI_SELECTION({ MultiSelectionCalendar() }),
-    RANGE_SELECTION({ RangeSelectionCalendar() });
+    RANGE_SELECTION({ RangeSelectionCalendar() }),
+    OFF_DAY_STATIC_CALENDAR({ OffDayStaticCalendar() });
 }
 
 @ExperimentalFoundationApi
@@ -89,6 +95,26 @@ private fun RangeSelectionCalendar() {
         dateSelection = DateSelection.Range(
             initial = selectedDates,
             onDaySelected = { it.showToast(context) },
+        )
+    )
+}
+
+@ExperimentalFoundationApi
+@Composable
+private fun OffDayStaticCalendar() {
+    Calendar(
+        yearMonth = YearMonth.now(),
+        onMonthDayData = ComposableTextData(
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
+            textColor = Color.Cyan,
+            modifier = Modifier.padding(all = 8.dp)
+        ),
+        offMonthDayData = ComposableTextData(
+            fontSize = 24.sp,
+            textAlign = TextAlign.Center,
+            textColor = Color.Blue,
+            modifier = Modifier.padding(all = 8.dp)
         )
     )
 }
