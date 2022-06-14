@@ -13,26 +13,24 @@ import java.time.YearMonth
 
 @ExperimentalFoundationApi
 @Composable
-fun StaticCalendar(
+internal fun StaticCalendar(
     days: List<LocalDate?>,
     currentMonth: YearMonth,
-    properties: CalendarProperties
+    dayTextData: DayTextData
 ) {
-    with(properties) {
-        LazyVerticalGrid(
-            cells = GridCells.Fixed(DAYS_IN_WEEK),
-            content = {
-                items(days) { day ->
-                    Day(
-                        dayData = day?.let { date ->
-                            DayData.StaticDayData(
-                                date = date,
-                                textData = if (date isIn currentMonth) onMonthDayData else offMonthDayData
-                            )
-                        } ?: DayData.EmptyDay()
-                    )
-                }
+    LazyVerticalGrid(
+        cells = GridCells.Fixed(DAYS_IN_WEEK),
+        content = {
+            items(days) { day ->
+                Day(
+                    dayData = day?.let { date ->
+                        DayData.StaticDayData(
+                            date = date,
+                            textData = dayTextData.resolve(date isIn currentMonth)
+                        )
+                    } ?: DayData.EmptyDay()
+                )
             }
-        )
-    }
+        }
+    )
 }

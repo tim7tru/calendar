@@ -26,11 +26,11 @@ fun Calendar(
     dateSelection: DateSelection<*>? = null,
     hasOffMonthDays: Boolean = true,
     titleData: CalendarTextData? = null,
+    headerData: CalendarTextData? = null,
     onMonthDayData: CalendarTextData? = null,
     offMonthDayData: CalendarTextData? = null
 ) {
-    val properties = CalendarProperties(
-        titleData = titleData,
+    val dayTextData = DayTextData(
         onMonthDayData = onMonthDayData,
         offMonthDayData = offMonthDayData
     )
@@ -42,13 +42,16 @@ fun Calendar(
             text = yearMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
         )
 
-        DayOfWeekHeader(startingDay = startingDay)
+        DayOfWeekHeader(
+            startingDay = startingDay,
+            textData = headerData
+        )
 
         when (dateSelection) {
-            is DateSelection.SingleDay -> SingleDaySelectionCalendar(days, yearMonth, dateSelection, properties)
-            is DateSelection.MultipleDay -> MultipleDaySelectionCalendar(days, yearMonth, dateSelection, properties)
-            is DateSelection.Range -> RangeSelectionCalendar(days, yearMonth, dateSelection, properties)
-            else -> StaticCalendar(days, yearMonth, properties)
+            is DateSelection.SingleDay -> SingleDaySelectionCalendar(days, yearMonth, dateSelection, dayTextData)
+            is DateSelection.MultipleDay -> MultipleDaySelectionCalendar(days, yearMonth, dateSelection, dayTextData)
+            is DateSelection.Range -> RangeSelectionCalendar(days, yearMonth, dateSelection, dayTextData)
+            else -> StaticCalendar(days, yearMonth, dayTextData)
         }
     }
 }

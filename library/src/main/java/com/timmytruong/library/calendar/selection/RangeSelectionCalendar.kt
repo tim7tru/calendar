@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.timmytruong.library.calendar.CalendarProperties
 import com.timmytruong.library.calendar.DAYS_IN_WEEK
+import com.timmytruong.library.calendar.DayTextData
 import com.timmytruong.library.day.Day
 import com.timmytruong.library.day.DayData
 import com.timmytruong.library.extension.*
@@ -27,31 +27,28 @@ internal fun RangeSelectionCalendar(
     days: List<LocalDate?>,
     currentMonth: YearMonth,
     dateSelection: DateSelection.Range,
-    properties: CalendarProperties
+    dayTextData: DayTextData
 ) {
-    with (properties) {
-        val selectedDateRange = remember {
-            mutableStateOf(
-                if (dateSelection.initial?.isValidRange() == true) dateSelection.initial
-                else NO_RANGE
+    val selectedDateRange = remember {
+        mutableStateOf(
+            if (dateSelection.initial?.isValidRange() == true) dateSelection.initial
+            else NO_RANGE
+        )
+    }
+    LazyVerticalGrid(cells = GridCells.Fixed(DAYS_IN_WEEK), content = {
+        items(days) { day ->
+            Day(
+                dayData = day?.let { date ->
+                    DayData.SelectableDayData(
+                        date = date,
+                        dayClicks = { selectedDateRange.onClick(date) },
+                        isSelected = date.isSelected(selectedDateRange.value),
+                        textData = dayTextData.resolve(date isIn currentMonth)
+                    )
+                } ?: DayData.EmptyDay()
             )
         }
-
-        LazyVerticalGrid(cells = GridCells.Fixed(DAYS_IN_WEEK), content = {
-            items(days) { day ->
-                Day(
-                    dayData = day?.let { date ->
-                        DayData.SelectableDayData(
-                            date = date,
-                            dayClicks = { selectedDateRange.onClick(date) },
-                            isSelected = date.isSelected(selectedDateRange.value),
-                            textData = if (date isIn currentMonth) onMonthDayData else offMonthDayData
-                        )
-                    } ?: DayData.EmptyDay()
-                )
-            }
-        })
-    }
+    })
 }
 
 private fun MutableState<Pair<LocalDate, LocalDate>>.onClick(date: LocalDate) {
