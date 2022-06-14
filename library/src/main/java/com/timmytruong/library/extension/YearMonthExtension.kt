@@ -5,13 +5,28 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 
-internal fun YearMonth.toDays(startingDay: DayOfWeek): List<LocalDate?> = mutableListOf<LocalDate?>().apply {
+internal fun YearMonth.toDays(
+    startingDay: DayOfWeek,
+    hasOffMonthDays: Boolean
+): List<LocalDate?> = mutableListOf<LocalDate?>().apply {
     val startOfMonth = LocalDate.of(year, month, 1)
     val endOfMonth = LocalDate.of(year, month, startOfMonth.lengthOfMonth())
 
-    if (startOfMonth.dayOfWeek != startingDay) repeat(startOfMonth.dayOfWeek.value) { add(null) }
+    val isStartDayFirstDayOfWeek = startOfMonth.dayOfWeek == startingDay
+    var curr: LocalDate
 
-    var curr = startOfMonth
+    if (!isStartDayFirstDayOfWeek) {
+        curr = startOfMonth.minusDays(startOfMonth.dayOfWeek.value.toLong())
+        repeat(startOfMonth.dayOfWeek.value) {
+            if (!hasOffMonthDays) add(null)
+            else {
+                add(curr)
+                curr = curr.plusDays(1)
+            }
+        }
+    }
+
+    curr = startOfMonth
 
     while (curr <= endOfMonth) {
         add(curr)
@@ -19,6 +34,10 @@ internal fun YearMonth.toDays(startingDay: DayOfWeek): List<LocalDate?> = mutabl
     }
 
     while (size % DAYS_IN_WEEK != 0) {
-        add(null)
+        if (!hasOffMonthDays) add(null)
+        else {
+            add(curr)
+            curr = curr.plusDays(1)
+        }
     }
 }

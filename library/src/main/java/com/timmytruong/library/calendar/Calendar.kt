@@ -8,8 +8,9 @@ import com.timmytruong.library.calendar.selection.DateSelection
 import com.timmytruong.library.calendar.selection.MultipleDaySelectionCalendar
 import com.timmytruong.library.calendar.selection.RangeSelectionCalendar
 import com.timmytruong.library.calendar.selection.SingleDaySelectionCalendar
+import com.timmytruong.library.core.CalendarTextData
 import com.timmytruong.library.core.Title
-import com.timmytruong.library.core.TitleData
+import com.timmytruong.library.extension.toDays
 import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -23,19 +24,31 @@ fun Calendar(
     yearMonth: YearMonth,
     startingDay: DayOfWeek = DayOfWeek.SUNDAY,
     dateSelection: DateSelection<*>? = null,
-    titleData: TitleData? = null
+    hasOffMonthDays: Boolean = true,
+    titleData: CalendarTextData? = null,
+    onMonthDayData: CalendarTextData? = null,
+    offMonthDayData: CalendarTextData? = null
 ) {
+    val properties = CalendarProperties(
+        titleData = titleData,
+        onMonthDayData = onMonthDayData,
+        offMonthDayData = offMonthDayData
+    )
+    val days = remember { yearMonth.toDays(startingDay, hasOffMonthDays) }
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Title(
             data = titleData,
             text = yearMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
         )
+
         DayOfWeekHeader(startingDay = startingDay)
+
         when (dateSelection) {
-            is DateSelection.SingleDay -> SingleDaySelectionCalendar(yearMonth, startingDay, dateSelection)
-            is DateSelection.MultipleDay -> MultipleDaySelectionCalendar(yearMonth, startingDay, dateSelection)
-            is DateSelection.Range -> RangeSelectionCalendar(yearMonth, startingDay, dateSelection)
-            else -> StaticCalendar(yearMonth, startingDay)
+            is DateSelection.SingleDay -> SingleDaySelectionCalendar(days, yearMonth, dateSelection, properties)
+            is DateSelection.MultipleDay -> MultipleDaySelectionCalendar(days, yearMonth, dateSelection, properties)
+            is DateSelection.Range -> RangeSelectionCalendar(days, yearMonth, dateSelection, properties)
+            else -> StaticCalendar(days, yearMonth, properties)
         }
     }
 }
