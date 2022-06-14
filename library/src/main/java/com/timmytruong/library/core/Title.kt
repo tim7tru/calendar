@@ -4,21 +4,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-data class TitleData(
-    val modifier: Modifier = Modifier.DEFAULT,
-    val fontSize: TextUnit = DEFAULT_FONT_SIZE
-)
-
 @Composable
-internal fun Title(data: TitleData?, text: String) {
+internal fun Title(data: CalendarTextData?, text: String) {
     Text(
         text = text,
         modifier = data?.modifier ?: Modifier.DEFAULT,
-        fontSize = data?.fontSize ?: DEFAULT_FONT_SIZE
+        fontSize = data?.fontSize ?: DEFAULT_FONT_SIZE,
+        textAlign = data?.textAlign ?: TextAlign.Center,
+        color = data?.textColor ?: Color.White
     )
 }
 

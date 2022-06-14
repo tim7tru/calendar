@@ -8,9 +8,9 @@ import com.timmytruong.library.calendar.selection.DateSelection
 import com.timmytruong.library.calendar.selection.MultipleDaySelectionCalendar
 import com.timmytruong.library.calendar.selection.RangeSelectionCalendar
 import com.timmytruong.library.calendar.selection.SingleDaySelectionCalendar
-import com.timmytruong.library.core.ComposableTextData
+import com.timmytruong.library.core.CalendarTextData
 import com.timmytruong.library.core.Title
-import com.timmytruong.library.core.TitleData
+import com.timmytruong.library.extension.toDays
 import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -24,17 +24,17 @@ fun Calendar(
     yearMonth: YearMonth,
     startingDay: DayOfWeek = DayOfWeek.SUNDAY,
     dateSelection: DateSelection<*>? = null,
-    titleData: TitleData? = null,
-    onMonthDayData: ComposableTextData? = null,
-    offMonthDayData: ComposableTextData? = null
+    hasOffMonthDays: Boolean = true,
+    titleData: CalendarTextData? = null,
+    onMonthDayData: CalendarTextData? = null,
+    offMonthDayData: CalendarTextData? = null
 ) {
     val properties = CalendarProperties(
-        yearMonth = yearMonth,
-        startingDay = startingDay,
         titleData = titleData,
         onMonthDayData = onMonthDayData,
         offMonthDayData = offMonthDayData
     )
+    val days = remember { yearMonth.toDays(startingDay, hasOffMonthDays) }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Title(
@@ -45,18 +45,10 @@ fun Calendar(
         DayOfWeekHeader(startingDay = startingDay)
 
         when (dateSelection) {
-            is DateSelection.SingleDay -> SingleDaySelectionCalendar(dateSelection, properties)
-            is DateSelection.MultipleDay -> MultipleDaySelectionCalendar(dateSelection, properties)
-            is DateSelection.Range -> RangeSelectionCalendar(dateSelection, properties)
-            else -> StaticCalendar(properties)
+            is DateSelection.SingleDay -> SingleDaySelectionCalendar(days, yearMonth, dateSelection, properties)
+            is DateSelection.MultipleDay -> MultipleDaySelectionCalendar(days, yearMonth, dateSelection, properties)
+            is DateSelection.Range -> RangeSelectionCalendar(days, yearMonth, dateSelection, properties)
+            else -> StaticCalendar(days, yearMonth, properties)
         }
     }
 }
-
-data class CalendarProperties(
-    val yearMonth: YearMonth,
-    val startingDay: DayOfWeek,
-    val titleData: TitleData?,
-    val onMonthDayData: ComposableTextData?,
-    val offMonthDayData: ComposableTextData?
-)

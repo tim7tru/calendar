@@ -11,18 +11,20 @@ import com.timmytruong.library.calendar.CalendarProperties
 import com.timmytruong.library.calendar.DAYS_IN_WEEK
 import com.timmytruong.library.day.Day
 import com.timmytruong.library.day.DayData
-import com.timmytruong.library.extension.generateDays
 import com.timmytruong.library.extension.isIn
+import java.time.LocalDate
+import java.time.YearMonth
 
 @ExperimentalFoundationApi
 @Composable
 fun SingleDaySelectionCalendar(
+    days: List<LocalDate?>,
+    currentMonth: YearMonth,
     dateSelection: DateSelection.SingleDay,
     properties: CalendarProperties
 ) {
     with(properties) {
         val selectedDate = remember { mutableStateOf(dateSelection.initial) }
-        val days = remember { generateDays() }
 
         LazyVerticalGrid(
             cells = GridCells.Fixed(DAYS_IN_WEEK),
@@ -33,7 +35,7 @@ fun SingleDaySelectionCalendar(
                             date = date,
                             dayClicks = { selectedDate.value = date },
                             isSelected = date.isEqual(selectedDate.value),
-                            textData = if (date isIn yearMonth) onMonthDayData else offMonthDayData
+                            textData = if (date isIn currentMonth) onMonthDayData else offMonthDayData
                         )
                     } ?: DayData.EmptyDay()
                     Day(data)

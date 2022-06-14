@@ -12,13 +12,15 @@ import com.timmytruong.library.calendar.CalendarProperties
 import com.timmytruong.library.calendar.DAYS_IN_WEEK
 import com.timmytruong.library.day.Day
 import com.timmytruong.library.day.DayData
-import com.timmytruong.library.extension.generateDays
 import com.timmytruong.library.extension.isIn
 import java.time.LocalDate
+import java.time.YearMonth
 
 @ExperimentalFoundationApi
 @Composable
 internal fun MultipleDaySelectionCalendar(
+    days: List<LocalDate?>,
+    currentMonth: YearMonth,
     dateSelection: DateSelection.MultipleDay,
     properties: CalendarProperties
 ) {
@@ -26,7 +28,6 @@ internal fun MultipleDaySelectionCalendar(
         val selectedDates = remember {
             mutableStateListOf<LocalDate>().apply { dateSelection.initial?.let { addAll(it) } }
         }
-        val days = remember { generateDays() }
         LazyVerticalGrid(cells = GridCells.Fixed(DAYS_IN_WEEK), content = {
             items(days) { day ->
                 Day(
@@ -35,7 +36,7 @@ internal fun MultipleDaySelectionCalendar(
                             date = date,
                             dayClicks = { selectedDates.onClick(date) },
                             isSelected = selectedDates.contains(date),
-                            textData = if (date isIn yearMonth) onMonthDayData else offMonthDayData
+                            textData = if (date isIn currentMonth) onMonthDayData else offMonthDayData
                         )
                     } ?: DayData.EmptyDay()
                 )

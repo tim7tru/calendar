@@ -5,17 +5,20 @@ import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import com.timmytruong.library.day.Day
 import com.timmytruong.library.day.DayData
-import com.timmytruong.library.extension.generateDays
 import com.timmytruong.library.extension.isIn
+import java.time.LocalDate
+import java.time.YearMonth
 
 @ExperimentalFoundationApi
 @Composable
-fun StaticCalendar(properties: CalendarProperties) {
+fun StaticCalendar(
+    days: List<LocalDate?>,
+    currentMonth: YearMonth,
+    properties: CalendarProperties
+) {
     with(properties) {
-        val days = remember { generateDays() }
         LazyVerticalGrid(
             cells = GridCells.Fixed(DAYS_IN_WEEK),
             content = {
@@ -24,7 +27,7 @@ fun StaticCalendar(properties: CalendarProperties) {
                         dayData = day?.let { date ->
                             DayData.StaticDayData(
                                 date = date,
-                                textData = if (date isIn yearMonth) onMonthDayData else offMonthDayData
+                                textData = if (date isIn currentMonth) onMonthDayData else offMonthDayData
                             )
                         } ?: DayData.EmptyDay()
                     )

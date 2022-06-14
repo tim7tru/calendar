@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.timmytruong.library.core.ComposableTextData
+import com.timmytruong.library.core.CalendarTextData
 import java.time.LocalDate
 
 internal sealed class DayData {
@@ -19,7 +19,7 @@ internal sealed class DayData {
 
     internal data class StaticDayData(
         val date: LocalDate,
-        val textData: ComposableTextData? = null,
+        val textData: CalendarTextData? = null,
         val modifier: Modifier = Modifier
     ): DayData()
 
@@ -27,7 +27,7 @@ internal sealed class DayData {
         val date: LocalDate,
         val isSelected: Boolean = false,
         val dayClicks: (() -> Unit)? = null,
-        val textData: ComposableTextData? = null
+        val textData: CalendarTextData? = null
     ): DayData()
 }
 

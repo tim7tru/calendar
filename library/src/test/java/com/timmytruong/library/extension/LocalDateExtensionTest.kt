@@ -3,6 +3,7 @@ package com.timmytruong.library.extension
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.YearMonth
 
 class LocalDateExtensionTest {
 
@@ -133,5 +134,37 @@ class LocalDateExtensionTest {
         val second = LocalDate.of(2000, 1, 7)
 
         (first to second).isValidRange() shouldBe false
+    }
+
+    @Test
+    fun `Given same month and year, when isIn is called, then the result is true`() {
+        val first = LocalDate.of(2022, 6, 1)
+        val second = YearMonth.of(2022, 6)
+
+        (first isIn second) shouldBe true
+    }
+
+    @Test
+    fun `Given same month and different year, when isIn is called, then the result is false`() {
+        val first = LocalDate.of(2000, 6, 1)
+        val second = YearMonth.of(2022, 6)
+
+        (first isIn second) shouldBe false
+    }
+
+    @Test
+    fun `Given same year and different month, when isIn is called, then the result is false`() {
+        val first = LocalDate.of(2022, 5, 1)
+        val second = YearMonth.of(2022, 6)
+
+        (first isIn second) shouldBe false
+    }
+
+    @Test
+    fun `Given different month and year, when isIn is called, then the result is false`() {
+        val first = LocalDate.of(2000, 5, 1)
+        val second = YearMonth.of(2022, 6)
+
+        (first isIn second) shouldBe false
     }
 }

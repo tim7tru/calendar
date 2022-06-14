@@ -3,22 +3,24 @@ package com.timmytruong.calendar
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.timmytruong.calendar.ui.theme.White500
 import com.timmytruong.library.calendar.Calendar
 import com.timmytruong.library.calendar.selection.DateSelection
-import com.timmytruong.library.core.ComposableTextData
+import com.timmytruong.library.core.CalendarTextData
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -35,13 +37,20 @@ enum class SampleScreen(val body: @Composable (NavController) -> Unit) {
 
 @ExperimentalFoundationApi
 @Composable
-fun Home(navController: NavController) {
+private fun Home(navController: NavController) {
+    val screens = remember { SampleScreen.values().toList().filterNot { it == SampleScreen.HOME } }
     LazyColumn(
         content = {
-            items(SampleScreen.values().toList().filterNot { it == SampleScreen.HOME }) { item ->
-                Button(onClick = { navController.navigate(item.name) }) {
-                    Text(text = item.name)
-                }
+            items(screens) { item ->
+                Text(
+                    text = item.name,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .clickable { navController.navigate(item.name) },
+                    textAlign = TextAlign.Center,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     )
@@ -104,21 +113,20 @@ private fun RangeSelectionCalendar() {
 private fun OffDayStaticCalendar() {
     Calendar(
         yearMonth = YearMonth.now(),
-        onMonthDayData = ComposableTextData(
+        onMonthDayData = CalendarTextData(
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
-            textColor = Color.Cyan,
+            textColor = Color.White,
             modifier = Modifier.padding(all = 8.dp)
         ),
-        offMonthDayData = ComposableTextData(
+        offMonthDayData = CalendarTextData(
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
-            textColor = Color.Blue,
+            textColor = White500,
             modifier = Modifier.padding(all = 8.dp)
         )
     )
 }
-
 
 private fun LocalDate.showToast(context: Context) {
     Toast.makeText(context, format(DateTimeFormatter.ISO_LOCAL_DATE), Toast.LENGTH_SHORT).show()

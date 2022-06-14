@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 
-data class ComposableTextData(
+data class CalendarTextData(
     val modifier: Modifier = Modifier,
     val textColor: Color? = null,
     val fontSize: TextUnit? = null,

@@ -17,12 +17,15 @@ import com.timmytruong.library.extension.isBetween
 import com.timmytruong.library.extension.isSelected
 import com.timmytruong.library.extension.isValidRange
 import java.time.LocalDate
+import java.time.YearMonth
 
 private val NO_RANGE = LocalDate.MAX to LocalDate.MIN
 
 @ExperimentalFoundationApi
 @Composable
 internal fun RangeSelectionCalendar(
+    days: List<LocalDate?>,
+    currentMonth: YearMonth,
     dateSelection: DateSelection.Range,
     properties: CalendarProperties
 ) {
@@ -33,7 +36,6 @@ internal fun RangeSelectionCalendar(
                 else NO_RANGE
             )
         }
-        val days = remember(properties) { properties.generateDays() }
 
         LazyVerticalGrid(cells = GridCells.Fixed(DAYS_IN_WEEK), content = {
             items(days) { day ->
@@ -43,7 +45,7 @@ internal fun RangeSelectionCalendar(
                             date = date,
                             dayClicks = { selectedDateRange.onClick(date) },
                             isSelected = date.isSelected(selectedDateRange.value),
-                            textData = if (date isIn yearMonth) onMonthDayData else offMonthDayData
+                            textData = if (date isIn currentMonth) onMonthDayData else offMonthDayData
                         )
                     } ?: DayData.EmptyDay()
                 )
