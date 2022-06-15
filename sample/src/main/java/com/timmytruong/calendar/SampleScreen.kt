@@ -2,17 +2,21 @@ package com.timmytruong.calendar
 
 import android.content.Context
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,31 +30,46 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
 @ExperimentalFoundationApi
-enum class SampleScreen(val body: @Composable (NavController) -> Unit) {
-    HOME({ Home(it) }),
-    STATIC_CALENDAR({ StaticCalendar() }),
-    SINGLE_SELECTION({ SingleSelectionCalendar() }),
-    MULTI_SELECTION({ MultiSelectionCalendar() }),
-    RANGE_SELECTION({ RangeSelectionCalendar() }),
-    OFF_DAY_STATIC_CALENDAR({ OffDayStaticCalendar() });
+enum class SampleScreen(
+    val body: @Composable (NavController) -> Unit,
+    @StringRes val title: Int
+) {
+    HOME({ Home(it) }, R.string.home),
+    STATIC_CALENDAR({ StaticCalendar() }, R.string.static_calendar),
+    SINGLE_SELECTION({ SingleSelectionCalendar() }, R.string.single_selection_calendar),
+    MULTI_SELECTION({ MultiSelectionCalendar() }, R.string.multiple_selection_calendar),
+    RANGE_SELECTION({ RangeSelectionCalendar() }, R.string.range_selection_calendar),
+    OFF_DAY_STATIC_CALENDAR({ OffDayStaticCalendar() }, R.string.home);
+
+    fun resolveTitle(context: Context) = context.getString(title)
 }
 
 @ExperimentalFoundationApi
 @Composable
 private fun Home(navController: NavController) {
+    val context = LocalContext.current
     val screens = remember { SampleScreen.values().toList().filterNot { it == SampleScreen.HOME } }
     LazyColumn(
+        Modifier.fillMaxWidth(),
         content = {
             items(screens) { item ->
-                Text(
-                    text = item.name,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .clickable { navController.navigate(item.name) },
-                    textAlign = TextAlign.Center,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(
+                    Modifier.fillMaxWidth().clickable { navController.navigate(item.name) },
+                ) {
+                    Icon(
+                        Icons.Filled.DateRange,
+                        contentDescription = item.name,
+                        tint = MaterialTheme.colors.secondary,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                    Text(
+                        text = item.resolveTitle(context),
+                        modifier = Modifier.padding(all = 8.dp),
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colors.primary
+                    )
+                }
+
             }
         }
     )

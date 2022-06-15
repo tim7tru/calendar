@@ -2,8 +2,12 @@ package com.timmytruong.calendar.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
 val White500 = Color(0x80FFFFFF)
+
+val BlueGreyDark = Color(0xFF62757f)
+val BlueGrey = Color(0xFF8FA3AD)
+val BlueGreyLight = Color(0xFFBFD4DF)
+
+val TealDark = Color(0xFF4F9B94)
+val Teal = Color(0xFF80CCC4)
+val TealLight = Color(0xFFB2FFF7)

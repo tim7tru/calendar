@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">calendar</string>
+    <string name="home">Home</string>
+    <string name="static_calendar">Static calendar</string>
+    <string name="single_selection_calendar">Single selection calendar</string>
+    <string name="multiple_selection_calendar">Multiple selection calendar</string>
+    <string name="range_selection_calendar">Range selection calendar</string>
 </resources>
