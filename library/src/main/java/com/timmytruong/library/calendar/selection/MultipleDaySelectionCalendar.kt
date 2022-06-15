@@ -33,7 +33,11 @@ internal fun MultipleDaySelectionCalendar(
                 dayData = day?.let { date ->
                     DayData.SelectableDayData(
                         date = date,
-                        dayClicks = { selectedDates.onClick(date) },
+                        dayClicks = {
+                            selectedDates.onClick(date)
+                            dateSelection.onDaySelected(date)
+                            dateSelection.onStateUpdated(selectedDates)
+                        },
                         isSelected = selectedDates.contains(date),
                         textData = dayTextData.resolve(date isIn currentMonth)
                     )

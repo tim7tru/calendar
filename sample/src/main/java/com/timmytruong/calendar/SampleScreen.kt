@@ -134,17 +134,40 @@ private fun SingleSelectionCalendar() {
 private fun MultiSelectionCalendar() {
     val context = LocalContext.current
     val selectedDates = remember { mutableStateListOf(LocalDate.now()) }
-    Calendar(
-        yearMonth = YearMonth.now(),
-        dateSelection = DateSelection.MultipleDay(
-            initial = selectedDates,
-            onDaySelected = { it.showToast(context) },
-            onStateUpdated = {
-                selectedDates.clear()
-                selectedDates.addAll(it)
-            }
-        )
+    val dayTextData = CalendarTextData(
+        modifier = Modifier.padding(8.dp),
+        textColor = MaterialTheme.colors.primaryVariant,
+        textAlign = TextAlign.Center,
+        fontSize = 16.sp
     )
+    val selectedDatesText = selectedDates.map { it.format(DateTimeFormatter.ISO_LOCAL_DATE) }
+
+    Column {
+        Calendar(
+            yearMonth = YearMonth.now(),
+            dateSelection = DateSelection.MultipleDay(
+                initial = selectedDates,
+                onDaySelected = { it.showToast(context) },
+                onStateUpdated = {
+                    selectedDates.clear()
+                    selectedDates.addAll(it)
+                }
+            ),
+            onMonthDayData = dayTextData,
+            offMonthDayData = dayTextData.copy(textColor = MaterialTheme.colors.primary)
+        )
+        Text(
+            text = stringResource(id = R.string.selected_dates),
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            color = MaterialTheme.colors.primary,
+        )
+        Text(
+            text = selectedDatesText.toString(),
+            fontSize = 20.sp,
+            color = MaterialTheme.colors.secondary
+        )
+    }
 }
 
 @ExperimentalFoundationApi
