@@ -54,7 +54,9 @@ private fun Home(navController: NavController) {
         content = {
             items(screens) { item ->
                 Row(
-                    Modifier.fillMaxWidth().clickable { navController.navigate(item.name) },
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { navController.navigate(item.name) },
                 ) {
                     Icon(
                         Icons.Filled.DateRange,
