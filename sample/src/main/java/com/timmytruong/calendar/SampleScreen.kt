@@ -17,6 +17,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -85,15 +87,46 @@ private fun StaticCalendar() { Calendar(yearMonth = YearMonth.now()) }
 @Composable
 private fun SingleSelectionCalendar() {
     val context = LocalContext.current
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    Calendar(
-        yearMonth = YearMonth.now(),
-        dateSelection = DateSelection.SingleDay(
-            initial = selectedDate,
-            onDaySelected = { it.showToast(context) },
-            onStateUpdated = { selectedDate = it }
-        )
+    var selectedDateText by remember {
+        mutableStateOf(LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE))
+    }
+    val dayTextData = CalendarTextData(
+        modifier = Modifier.padding(8.dp),
+        textColor = MaterialTheme.colors.primaryVariant,
+        textAlign = TextAlign.Center,
+        fontSize = 16.sp
     )
+
+    Column {
+        Calendar(
+            yearMonth = YearMonth.now(),
+            dateSelection = DateSelection.SingleDay(
+                initial = LocalDate.now(),
+                onDaySelected = { it.showToast(context) },
+                onStateUpdated = { selectedDateText = it.format(DateTimeFormatter.ISO_LOCAL_DATE) }
+            ),
+            titleData = CalendarTextData(fontWeight = FontWeight.Bold),
+            onMonthDayData = dayTextData,
+            offMonthDayData = dayTextData.copy(textColor = MaterialTheme.colors.primary)
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth().padding(16.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.selected_dates),
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = MaterialTheme.colors.primary,
+            )
+            Text(
+                text = selectedDateText,
+                fontSize = 20.sp,
+                color = MaterialTheme.colors.secondary,
+            )
+        }
+    }
 }
 
 @ExperimentalFoundationApi

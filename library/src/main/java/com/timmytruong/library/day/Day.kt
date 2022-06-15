@@ -63,19 +63,19 @@ private fun SelectableDay(dayData: DayData.SelectableDayData) {
     var modifier: Modifier = dayData.textData?.modifier ?: Modifier
 
     if (modifier == Modifier) {
-        modifier = modifier.then(
-            Modifier
-                .padding(all = 8.dp)
-                .drawBehind {
-                    if (dayData.isSelected) drawCircle(color = Color.Red)
-                    else drawCircle(color = Color.Transparent)
-                }
-        )
+        modifier = modifier.then(Modifier.padding(all = 8.dp))
     }
 
     with(dayData) {
         dayClicks?.let {
-            modifier = modifier.then(Modifier.clickable { it.invoke() })
+            modifier = modifier.then(
+                Modifier
+                    .clickable { it.invoke() }
+                    .drawBehind {
+                        if (dayData.isSelected) drawCircle(color = Color.Red)
+                        else drawCircle(color = Color.Transparent)
+                    }
+            )
         }
 
         Text(
