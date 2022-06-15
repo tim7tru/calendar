@@ -2,6 +2,8 @@ package com.timmytruong.library.extension
 
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.lang.IllegalArgumentException
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -166,5 +168,27 @@ class LocalDateExtensionTest {
         val second = YearMonth.of(2022, 6)
 
         (first isIn second) shouldBe false
+    }
+
+    @Test
+    fun `Given valid date range, when getDatesFromRange is called, then all dates in range are returned`() {
+        val first = LocalDate.of(2000, 1, 1)
+        val second = LocalDate.of(2000, 1, 7)
+
+        val expectedResult: List<LocalDate> = mutableListOf<LocalDate>().apply {
+            repeat(7) {
+                add(LocalDate.of(2000, 1, it + 1))
+            }
+        }
+
+        (first to second).getDatesFromRange() shouldBe expectedResult
+    }
+
+    @Test
+    fun `Given invalid date range, when getDatesFromRange is called, then exception is thrown`() {
+        val first = LocalDate.of(2000, 1, 7)
+        val second = LocalDate.of(2000, 1, 1)
+
+        assertThrows<IllegalArgumentException> { (first to second).getDatesFromRange() }
     }
 }

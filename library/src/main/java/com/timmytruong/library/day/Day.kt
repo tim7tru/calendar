@@ -26,7 +26,7 @@ internal sealed class DayData {
     internal data class SelectableDayData(
         val date: LocalDate,
         val isSelected: Boolean = false,
-        val dayClicks: (() -> Unit)? = null,
+        val dayClicks: () -> Unit,
         val textData: CalendarTextData? = null
     ): DayData()
 }
@@ -46,7 +46,7 @@ private fun StaticDay(dayData: DayData.StaticDayData) {
         Text(
             text = "${date.dayOfMonth}",
             color = textData?.textColor ?: Color.White,
-            modifier = modifier,
+            modifier = textData?.modifier ?: modifier,
             textAlign = textData?.textAlign ?: TextAlign.Center,
             fontSize = textData?.fontSize ?: 12.sp
         )
@@ -60,23 +60,15 @@ private fun EmptyDay(dayData: DayData.EmptyDay) {
 
 @Composable
 private fun SelectableDay(dayData: DayData.SelectableDayData) {
-    var modifier: Modifier = dayData.textData?.modifier ?: Modifier
-
-    if (modifier == Modifier) {
-        modifier = modifier.then(Modifier.padding(all = 8.dp))
-    }
-
     with(dayData) {
-        dayClicks?.let {
-            modifier = modifier.then(
-                Modifier
-                    .clickable { it.invoke() }
-                    .drawBehind {
-                        if (dayData.isSelected) drawCircle(color = Color.Red)
-                        else drawCircle(color = Color.Transparent)
-                    }
-            )
-        }
+        val modifier = (textData?.modifier ?: Modifier).then(
+            Modifier
+                .clickable { dayClicks.invoke() }
+                .drawBehind {
+                    if (dayData.isSelected) drawCircle(color = Color.Red)
+                    else drawCircle(color = Color.Transparent)
+                }
+        )
 
         Text(
             text = "${date.dayOfMonth}",
