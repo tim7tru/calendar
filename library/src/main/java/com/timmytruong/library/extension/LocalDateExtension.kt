@@ -18,3 +18,12 @@ internal fun LocalDate.isBetween(range: Pair<LocalDate, LocalDate>) =
 internal fun Pair<LocalDate, LocalDate>.isValidRange() = first.isBeforeOrEqual(second)
 
 internal infix fun LocalDate.isIn(date: YearMonth): Boolean = month == date.month && year == date.year
+
+fun Pair<LocalDate, LocalDate>.getDatesFromRange(): List<LocalDate> = mutableListOf<LocalDate>().apply {
+    if (!isValidRange()) throw IllegalArgumentException("Invalid date range!")
+    var curr = first
+    while (curr.isBeforeOrEqual(second)) {
+        add(curr)
+        curr = curr.plusDays(1)
+    }
+}

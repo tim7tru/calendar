@@ -4,9 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import com.timmytruong.library.calendar.DAYS_IN_WEEK
 import com.timmytruong.library.calendar.DayTextData
 import com.timmytruong.library.day.Day
@@ -23,7 +21,7 @@ internal fun SingleDaySelectionCalendar(
     dateSelection: DateSelection.SingleDay,
     dayTextData: DayTextData
 ) {
-    val selectedDate = remember { mutableStateOf(dateSelection.initial) }
+    var selectedDate by remember { mutableStateOf(dateSelection.initial) }
 
     LazyVerticalGrid(
         cells = GridCells.Fixed(DAYS_IN_WEEK),
@@ -32,8 +30,14 @@ internal fun SingleDaySelectionCalendar(
                 val data = day?.let { date ->
                     DayData.SelectableDayData(
                         date = date,
-                        dayClicks = { selectedDate.value = date },
-                        isSelected = date.isEqual(selectedDate.value),
+                        dayClicks = {
+                            selectedDate = date
+                            dateSelection.onDaySelected(date)
+                            selectedDate?.let {
+                                dateSelection.onStateUpdated(it)
+                            }
+                        },
+                        isSelected = date.isEqual(selectedDate),
                         textData = dayTextData.resolve(date isIn currentMonth)
                     )
                 } ?: DayData.EmptyDay()
