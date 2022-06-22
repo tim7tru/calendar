@@ -11,20 +11,3 @@ internal fun <T> Array<T>.reverseWithIndices(start: Int, end: Int): Array<T> {
     }
     return this
 }
-
-internal fun <T> List<T>.to2DList(columns: Int): List<List<T>> {
-    val result = mutableListOf<List<T>>()
-    val temp = mutableListOf<T>()
-
-    forEach {
-        if (temp.size == columns) {
-            result.add(temp.toList())
-            temp.clear()
-        }
-        temp.add(it)
-    }
-
-    result.add(temp)
-
-    return result
-}
