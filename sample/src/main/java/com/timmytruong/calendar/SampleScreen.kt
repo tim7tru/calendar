@@ -10,10 +10,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.RadioButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -25,12 +27,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.timmytruong.calendar.ui.theme.White500
 import com.timmytruong.library.calendar.Calendar
+import com.timmytruong.library.calendar.DAYS_IN_WEEK
 import com.timmytruong.library.calendar.selection.DateSelection
 import com.timmytruong.library.core.CalendarTextData
 import com.timmytruong.library.extension.getDatesFromRange
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.*
 
 @ExperimentalFoundationApi
 enum class SampleScreen(
@@ -80,18 +86,56 @@ private fun Home(navController: NavController) {
 @ExperimentalFoundationApi
 @Composable
 private fun StaticCalendar() {
+    var startingDay by remember { mutableStateOf(DayOfWeek.SUNDAY) }
+
     val dayTextData = CalendarTextData(
         modifier = Modifier.padding(all = 12.dp),
         textColor = MaterialTheme.colors.primaryVariant,
         textAlign = TextAlign.Center,
         fontSize = 16.sp
     )
-    Calendar(
-        yearMonth = YearMonth.now(),
-        titleData = CalendarTextData(fontWeight = FontWeight.Bold),
-        onMonthDayData = dayTextData,
-        offMonthDayData = dayTextData.copy(textColor = MaterialTheme.colors.primary)
-    )
+
+    LazyColumn(content = {
+        item {
+            Calendar(
+                yearMonth = YearMonth.now(),
+                titleData = CalendarTextData(fontWeight = FontWeight.Bold),
+                onMonthDayData = dayTextData,
+                offMonthDayData = dayTextData.copy(textColor = MaterialTheme.colors.primary),
+                startingDay = startingDay
+            )
+        }
+
+        item {
+            Text(
+                text = stringResource(R.string.starting_day_of_week),
+                modifier = Modifier.padding(16.dp),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        }
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                DayOfWeek.values().forEach { dayOfWeek ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        RadioButton(
+                            selected = dayOfWeek == startingDay,
+                            onClick = { startingDay = dayOfWeek }
+                        )
+                        Text(
+                            text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+                        )
+                    }
+                }
+            }
+        }
+    })
 }
 
 @ExperimentalFoundationApi

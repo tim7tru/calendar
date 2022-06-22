@@ -1,9 +1,10 @@
 package com.timmytruong.library.calendar
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import com.timmytruong.library.calendar.selection.DateSelection
 import com.timmytruong.library.calendar.selection.MultipleDaySelectionCalendar
 import com.timmytruong.library.calendar.selection.RangeSelectionCalendar
@@ -16,7 +17,7 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.*
 
-internal const val DAYS_IN_WEEK = 7
+const val DAYS_IN_WEEK = 7
 
 @ExperimentalFoundationApi
 @Composable
@@ -34,9 +35,11 @@ fun Calendar(
         onMonthDayData = onMonthDayData,
         offMonthDayData = offMonthDayData
     )
-    val days = remember { yearMonth.toDays(startingDay, hasOffMonthDays) }
+    val days = yearMonth.toDays(startingDay, hasOffMonthDays)
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally) {
         Title(
             data = titleData,
             text = yearMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
