@@ -1,17 +1,14 @@
 package com.timmytruong.library.calendar.selection
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.timmytruong.library.calendar.DAYS_IN_WEEK
 import com.timmytruong.library.calendar.DayTextData
 import com.timmytruong.library.day.Day
 import com.timmytruong.library.day.DayData
+import com.timmytruong.library.day.DayGrid
 import com.timmytruong.library.extension.*
 import com.timmytruong.library.extension.isBetween
 import com.timmytruong.library.extension.isSelected
@@ -35,10 +32,12 @@ internal fun RangeSelectionCalendar(
             else NO_RANGE
         )
     }
-    LazyVerticalGrid(cells = GridCells.Fixed(DAYS_IN_WEEK), content = {
-        items(days) { day ->
+
+    DayGrid(
+        gridItems = days,
+        composable = {
             Day(
-                dayData = day?.let { date ->
+                dayData = it?.let { date ->
                     DayData.SelectableDayData(
                         date = date,
                         dayClicks = { selectedDateRange.onClick(date) },
@@ -48,7 +47,7 @@ internal fun RangeSelectionCalendar(
                 } ?: DayData.EmptyDay()
             )
         }
-    })
+    )
 }
 
 private fun MutableState<Pair<LocalDate, LocalDate>>.onClick(date: LocalDate) {

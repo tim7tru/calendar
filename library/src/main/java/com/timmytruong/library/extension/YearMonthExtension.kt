@@ -1,6 +1,7 @@
 package com.timmytruong.library.extension
 
 import com.timmytruong.library.calendar.DAYS_IN_WEEK
+import java.lang.IllegalArgumentException
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -40,3 +41,19 @@ internal fun YearMonth.toDays(
         }
     }
 }
+
+internal val Pair<YearMonth, YearMonth>.months: List<YearMonth>
+    get() {
+        if (first.isAfter(second)) throw IllegalArgumentException("Invalid date range! $first is after $second!")
+        if (first == second) return listOf(first)
+
+        val result = mutableListOf<YearMonth>()
+        var curr = first
+
+        while (curr != second) {
+            result.add(curr)
+            curr = curr.plusMonths(1)
+        }
+
+        return result
+    }
