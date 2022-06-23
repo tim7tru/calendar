@@ -7,4 +7,5 @@
     <string name="range_selection_calendar">Range selection calendar</string>
     <string name="selected_dates">Selected date(s): </string>
     <string name="starting_day_of_week">Starting day of week</string>
+    <string name="show_off_month_days">Show off month days</string>
 </resources>
