@@ -13,20 +13,19 @@ internal fun YearMonth.toDays(
     val endOfMonth = LocalDate.of(year, month, startOfMonth.lengthOfMonth())
 
     val isStartDayFirstDayOfWeek = startOfMonth.dayOfWeek == startingDay
-    var curr: LocalDate
+    var curr = startOfMonth
 
     if (!isStartDayFirstDayOfWeek) {
-        curr = startOfMonth.minusDays(startOfMonth.dayOfWeek.value.toLong())
-        repeat(startOfMonth.dayOfWeek.value) {
+        while(curr.dayOfWeek != startingDay) {
+            curr = curr.minusDays(1)
+        }
+
+        while(curr != startOfMonth) {
             if (!hasOffMonthDays) add(null)
-            else {
-                add(curr)
-                curr = curr.plusDays(1)
-            }
+            else add(curr)
+            curr = curr.plusDays(1)
         }
     }
-
-    curr = startOfMonth
 
     while (curr <= endOfMonth) {
         add(curr)
