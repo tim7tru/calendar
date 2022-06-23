@@ -16,8 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.timmytruong.calendar.ui.screen.ScreenHandler
 import com.timmytruong.calendar.ui.theme.CalendarTheme
-import kotlinx.coroutines.flow.collect
 
 @ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
@@ -37,13 +37,13 @@ fun CalendarApp() {
         val context = LocalContext.current
         val navController = rememberNavController()
         var canPop by remember { mutableStateOf(false) }
-        var title by remember { mutableStateOf(SampleScreen.HOME.resolveTitle(context)) }
+        var title by remember { mutableStateOf(ScreenHandler.HOME.resolveTitle(context)) }
 
         LaunchedEffect(navController) {
             navController.currentBackStackEntryFlow.collect { entry ->
-                val route = entry.destination.route ?: SampleScreen.HOME.name
-                canPop = route != SampleScreen.HOME.name
-                title = SampleScreen.valueOf(route).resolveTitle(context)
+                val route = entry.destination.route ?: ScreenHandler.HOME.name
+                canPop = route != ScreenHandler.HOME.name
+                title = ScreenHandler.valueOf(route).resolveTitle(context)
             }
         }
 
@@ -79,8 +79,8 @@ fun CalendarApp() {
             },
             content = {
                 Surface(color = MaterialTheme.colors.background) {
-                    NavHost(navController = navController, startDestination = SampleScreen.HOME.name) {
-                        SampleScreen.values().forEach { screen ->
+                    NavHost(navController = navController, startDestination = ScreenHandler.HOME.name) {
+                        ScreenHandler.values().forEach { screen ->
                             composable(screen.name) {
                                 screen.body(navController)
                             }

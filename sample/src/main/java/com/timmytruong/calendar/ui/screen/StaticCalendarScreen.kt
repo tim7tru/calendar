@@ -1,4 +1,4 @@
-package com.timmytruong.calendar.screen
+package com.timmytruong.calendar.ui.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
