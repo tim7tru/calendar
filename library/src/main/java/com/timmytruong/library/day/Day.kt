@@ -1,14 +1,12 @@
 package com.timmytruong.library.day
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.timmytruong.library.core.CalendarTextData
 import java.time.LocalDate
@@ -62,12 +60,13 @@ private fun EmptyDay(dayData: DayData.EmptyDay) {
 private fun SelectableDay(dayData: DayData.SelectableDayData) {
     with(dayData) {
         val modifier = (textData?.modifier ?: Modifier).then(
-            Modifier
-                .clickable { dayClicks.invoke() }
-                .drawBehind {
-                    if (dayData.isSelected) drawCircle(color = Color.Red)
-                    else drawCircle(color = Color.Transparent)
-                }
+            Modifier.selectable(
+                selected = dayData.isSelected,
+                onClick = { dayData.dayClicks() }
+            ).drawBehind {
+                if (dayData.isSelected) drawCircle(color = Color.Red)
+                else drawCircle(color = Color.Transparent)
+            }
         )
 
         Text(

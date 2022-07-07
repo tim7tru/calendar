@@ -50,7 +50,7 @@ internal val Pair<YearMonth, YearMonth>.months: List<YearMonth>
         val result = mutableListOf<YearMonth>()
         var curr = first
 
-        while (curr != second) {
+        while (!curr.isAfter(second)) {
             result.add(curr)
             curr = curr.plusMonths(1)
         }
