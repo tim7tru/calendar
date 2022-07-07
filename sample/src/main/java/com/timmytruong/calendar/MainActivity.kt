@@ -16,9 +16,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.timmytruong.calendar.ui.screen.ScreenHandler
 import com.timmytruong.calendar.ui.theme.CalendarTheme
 
+@ExperimentalPagerApi
 @ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
 
@@ -30,6 +32,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalPagerApi
 @ExperimentalFoundationApi
 @Composable
 fun CalendarApp() {
