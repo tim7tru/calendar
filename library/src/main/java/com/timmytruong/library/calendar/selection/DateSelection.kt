@@ -1,5 +1,6 @@
 package com.timmytruong.library.calendar.selection
 
+import androidx.compose.ui.graphics.Color
 import java.time.LocalDate
 
 internal typealias DaySelection = (LocalDate) -> Unit

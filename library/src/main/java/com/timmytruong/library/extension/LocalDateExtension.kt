@@ -20,7 +20,7 @@ internal fun Pair<LocalDate, LocalDate>.isValidRange() = first.isBeforeOrEqual(s
 internal infix fun LocalDate.isIn(date: YearMonth): Boolean = month == date.month && year == date.year
 
 fun Pair<LocalDate, LocalDate>.getDatesFromRange(): List<LocalDate> = mutableListOf<LocalDate>().apply {
-    if (!isValidRange()) throw IllegalArgumentException("Invalid date range!")
+    if (!isValidRange()) return@apply
     var curr = first
     while (curr.isBeforeOrEqual(second)) {
         add(curr)

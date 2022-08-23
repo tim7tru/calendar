@@ -20,6 +20,7 @@ import com.timmytruong.library.extension.months
 import com.timmytruong.library.extension.toDays
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.*
@@ -49,9 +50,7 @@ fun Calendar(
         "${yearMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${yearMonth.year}"
     }
 
-    val days = remember {
-        yearMonth.toDays(startingDay, hasOffMonthDays)
-    }
+    val days = remember { yearMonth.toDays(startingDay, hasOffMonthDays) }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -83,16 +82,16 @@ fun HorizontalCalendarRange(
     onMonthDayData: CalendarTextData? = null,
     offMonthDayData: CalendarTextData? = null
 ) {
-    val months = remember { mutableStateOf(range.months) }
-    val pagerState = rememberPagerState(months.value.indexOf(startingMonth))
+    val months = remember { range.months }
+    val pagerState = rememberPagerState(months.indexOf(startingMonth))
 
     HorizontalPager(
         verticalAlignment = Alignment.Top,
-        count = months.value.size,
+        count = months.size,
         state = pagerState
     ) { page ->
         Calendar(
-            yearMonth = months.value[page],
+            yearMonth = months[page],
             startingDay = startingDay,
             dateSelection = dateSelection,
             hasOffMonthDays = hasOffMonthDays,

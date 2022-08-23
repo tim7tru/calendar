@@ -40,7 +40,11 @@ internal fun RangeSelectionCalendar(
                 dayData = it?.let { date ->
                     DayData.SelectableDayData(
                         date = date,
-                        dayClicks = { selectedDateRange.onClick(date) },
+                        dayClicks = {
+                            selectedDateRange.onClick(date)
+                            dateSelection.onDaySelected(date)
+                            dateSelection.onStateUpdated(selectedDateRange.value)
+                        },
                         isSelected = date.isSelected(selectedDateRange.value),
                         textData = dayTextData.resolve(date isIn currentMonth)
                     )

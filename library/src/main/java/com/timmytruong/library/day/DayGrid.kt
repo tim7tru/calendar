@@ -12,8 +12,8 @@ import com.timmytruong.library.calendar.DAYS_IN_WEEK
 
 @Composable
 internal fun <T> DayGrid(
-    gridItems: List<T?>,
-    composable: @Composable (T?) -> Unit
+    gridItems: List<T>,
+    composable: @Composable (T) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxWidth().heightIn(max = 1000.dp),
