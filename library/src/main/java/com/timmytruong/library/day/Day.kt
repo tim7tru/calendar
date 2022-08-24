@@ -1,10 +1,11 @@
 package com.timmytruong.library.day
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -63,10 +64,10 @@ private fun SelectableDay(dayData: DayData.SelectableDayData) {
             Modifier.selectable(
                 selected = dayData.isSelected,
                 onClick = { dayData.dayClicks() }
-            ).drawBehind {
-                if (dayData.isSelected) drawCircle(color = Color.Red)
-                else drawCircle(color = Color.Transparent)
-            }
+            ).background(
+                color = if (dayData.isSelected) Color.Red else Color.Transparent,
+                shape = CircleShape
+            )
         )
 
         Text(

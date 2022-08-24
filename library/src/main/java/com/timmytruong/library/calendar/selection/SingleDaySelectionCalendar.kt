@@ -15,26 +15,44 @@ import java.time.YearMonth
 internal fun SingleDaySelectionCalendar(
     days: List<LocalDate?>,
     currentMonth: YearMonth,
-    dateSelection: DateSelection.SingleDay,
+    calendarState: CalendarState<LocalDate>,
     dayTextData: DayTextData
 ) {
-    var selectedDate by remember { mutableStateOf(dateSelection.initial) }
-
     DayGrid(gridItems = days) {
         val data = it?.let { date ->
             DayData.SelectableDayData(
                 date = date,
-                dayClicks = {
-                    selectedDate = date
-                    dateSelection.onDaySelected(date)
-                    selectedDate?.let {
-                        dateSelection.onStateUpdated(it)
-                    }
-                },
-                isSelected = date.isEqual(selectedDate),
+                dayClicks = { calendarState.onDateSelected(date) },
+                isSelected = calendarState.isSelected(date),
                 textData = dayTextData.resolve(date isIn currentMonth)
             )
         } ?: DayData.EmptyDay()
         Day(data)
     }
+}
+
+class SingleSelectionState(
+    initial: LocalDate? = null,
+    onDateSelected: DaySelection? = null,
+    private val onStateUpdated: DateStateUpdate<LocalDate>? = null
+): CalendarState<LocalDate>(CalendarSelection.SINGLE_DAY, onDateSelected) {
+
+    override val selected = initial?.let { mutableStateOf(it) }
+
+    override fun isSelected(date: LocalDate): Boolean = selected?.value == date
+
+    override fun onDateSelected(date: LocalDate) {
+        super.onDateSelected(date)
+        selected?.value = date
+        onStateUpdated?.invoke(date)
+    }
+}
+
+@Composable
+fun rememberSingleSelectionState(
+    initial: LocalDate?,
+    onDateSelected: DaySelection?,
+    onStateUpdated: DateStateUpdate<LocalDate>?
+): SingleSelectionState = remember(initial) {
+    SingleSelectionState(initial, onDateSelected, onStateUpdated)
 }
