@@ -1,4 +1,4 @@
-package com.timmytruong.calendar.ui.screen
+package com.timmytruong.calendar.ui.screen.selection
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.timmytruong.calendar.ui.screen.reusable.SelectedDatesText
 import com.timmytruong.calendar.ui.screen.util.showToast
 import com.timmytruong.library.calendar.Calendar
-import com.timmytruong.library.calendar.selection.DateSelection
+import com.timmytruong.library.calendar.selection.rememberMultiSelectionState
 import com.timmytruong.library.core.CalendarTextData
 import java.time.LocalDate
 import java.time.YearMonth
@@ -26,27 +26,32 @@ import java.time.format.DateTimeFormatter
 @Composable
 internal fun MultiSelectionCalendar() {
     val context = LocalContext.current
+    val primaryColor = MaterialTheme.colors.primaryVariant
     val selectedDates = remember { mutableStateListOf(LocalDate.now()) }
     val selectedDatesText = selectedDates.map { it.format(DateTimeFormatter.ISO_LOCAL_DATE) }
 
-    val dayTextData = CalendarTextData(
-        modifier = Modifier.padding(8.dp),
-        textColor = MaterialTheme.colors.primaryVariant,
-        textAlign = TextAlign.Center,
-        fontSize = 16.sp
+    val dayTextData = remember {
+        CalendarTextData(
+            modifier = Modifier.padding(8.dp),
+            textColor = primaryColor,
+            textAlign = TextAlign.Center,
+            fontSize = 16.sp
+        )
+    }
+
+    val calendarState = rememberMultiSelectionState(
+        initial = selectedDates,
+        onDateSelected = { it.showToast(context) },
+        onStateUpdated = {
+            selectedDates.clear()
+            selectedDates.addAll(it)
+        }
     )
 
     Column {
         Calendar(
             yearMonth = YearMonth.now(),
-            dateSelection = DateSelection.MultipleDay(
-                initial = selectedDates,
-                onDaySelected = { it.showToast(context) },
-                onStateUpdated = {
-                    selectedDates.clear()
-                    selectedDates.addAll(it)
-                }
-            ),
+            calendarState = calendarState,
             onMonthDayData = dayTextData,
             offMonthDayData = dayTextData.copy(textColor = MaterialTheme.colors.primary)
         )

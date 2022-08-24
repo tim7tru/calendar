@@ -2,9 +2,8 @@ package com.timmytruong.library.calendar.selection
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.timmytruong.library.calendar.DayTextData
 import com.timmytruong.library.day.Day
 import com.timmytruong.library.day.DayData
@@ -18,23 +17,16 @@ import java.time.YearMonth
 internal fun MultipleDaySelectionCalendar(
     days: List<LocalDate?>,
     currentMonth: YearMonth,
-    dateSelection: DateSelection.MultipleDay,
+    calendarState: CalendarState<List<LocalDate>>,
     dayTextData: DayTextData
 ) {
-    val selectedDates = remember {
-        mutableStateListOf<LocalDate>().apply { dateSelection.initial?.let { addAll(it) } }
-    }
     DayGrid(gridItems = days) {
         Day(
             dayData = it?.let { date ->
                 DayData.SelectableDayData(
                     date = date,
-                    dayClicks = {
-                        selectedDates.onClick(date)
-                        dateSelection.onDaySelected(date)
-                        dateSelection.onStateUpdated(selectedDates)
-                    },
-                    isSelected = selectedDates.contains(date),
+                    dayClicks = { calendarState.onDateSelected(date) },
+                    isSelected = calendarState.isSelected(date),
                     textData = dayTextData.resolve(date isIn currentMonth)
                 )
             } ?: DayData.EmptyDay()
@@ -42,7 +34,38 @@ internal fun MultipleDaySelectionCalendar(
     }
 }
 
-private fun SnapshotStateList<LocalDate>.onClick(date: LocalDate) {
-    if (contains(date)) remove(date)
-    else add(date)
+class MultiSelectionState(
+    initial: List<LocalDate>? = null,
+    onDateSelected: DaySelection? = null,
+    private val onStateUpdated: DateStateUpdate<List<LocalDate>>? = null
+): CalendarState<List<LocalDate>>(CalendarSelection.MULTI_DAY, onDateSelected) {
+
+    override val selected = initial?.let { mutableStateOf(it) }
+
+    override fun isSelected(date: LocalDate): Boolean {
+        return selected?.value?.contains(date) == true
+    }
+
+    override fun onDateSelected(date: LocalDate) {
+        super.onDateSelected(date)
+        if (selected?.value?.contains(date) == true) {
+            selected.value = selected.value.toMutableList().apply { remove(date) }
+        } else {
+            selected?.value?.toMutableList()?.apply {
+                add(date)
+                selected.value = this
+            }
+        }
+        selected?.value?.let { onStateUpdated?.invoke(it) }
+    }
+}
+
+
+@Composable
+fun rememberMultiSelectionState(
+    initial: List<LocalDate>?,
+    onDateSelected: DaySelection?,
+    onStateUpdated: DateStateUpdate<List<LocalDate>>?
+): MultiSelectionState = remember(initial) {
+    MultiSelectionState(initial, onDateSelected, onStateUpdated)
 }

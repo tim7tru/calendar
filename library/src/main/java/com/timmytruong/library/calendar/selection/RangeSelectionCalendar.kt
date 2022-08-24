@@ -5,14 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import com.timmytruong.library.calendar.*
 import com.timmytruong.library.calendar.DayTextData
 import com.timmytruong.library.day.Day
 import com.timmytruong.library.day.DayData
 import com.timmytruong.library.day.DayGrid
 import com.timmytruong.library.extension.*
-import com.timmytruong.library.extension.isBetween
-import com.timmytruong.library.extension.isSelected
-import com.timmytruong.library.extension.isValidRange
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -23,16 +21,9 @@ private val NO_RANGE = LocalDate.MAX to LocalDate.MIN
 internal fun RangeSelectionCalendar(
     days: List<LocalDate?>,
     currentMonth: YearMonth,
-    dateSelection: DateSelection.Range,
+    calendarState: CalendarState<Pair<LocalDate, LocalDate>>,
     dayTextData: DayTextData
 ) {
-    val selectedDateRange = remember {
-        mutableStateOf(
-            if (dateSelection.initial?.isValidRange() == true) dateSelection.initial
-            else NO_RANGE
-        )
-    }
-
     DayGrid(
         gridItems = days,
         composable = {
@@ -40,12 +31,8 @@ internal fun RangeSelectionCalendar(
                 dayData = it?.let { date ->
                     DayData.SelectableDayData(
                         date = date,
-                        dayClicks = {
-                            selectedDateRange.onClick(date)
-                            dateSelection.onDaySelected(date)
-                            dateSelection.onStateUpdated(selectedDateRange.value)
-                        },
-                        isSelected = date.isSelected(selectedDateRange.value),
+                        dayClicks = { calendarState.onDateSelected(date) },
+                        isSelected = calendarState.isSelected(date),
                         textData = dayTextData.resolve(date isIn currentMonth)
                     )
                 } ?: DayData.EmptyDay()
@@ -54,13 +41,41 @@ internal fun RangeSelectionCalendar(
     )
 }
 
-private fun MutableState<Pair<LocalDate, LocalDate>>.onClick(date: LocalDate) {
-    value = with(value) {
-        when {
-            this == NO_RANGE || date.isBefore(first) -> date to LocalDate.MIN
-            date.isEqual(first) -> NO_RANGE
-            date.isBetween(this) || date.isAfterOrEqual(second) -> first to date
-            else -> value
+class RangeSelectionState(
+    initial: Pair<LocalDate, LocalDate>? = null,
+    onDateSelected: DaySelection? = null,
+    private val onStateUpdated: DateStateUpdate<Pair<LocalDate, LocalDate>>? = null
+): CalendarState<Pair<LocalDate, LocalDate>>(CalendarSelection.RANGE, onDateSelected) {
+
+    override val selected = initial?.let { mutableStateOf(it) }
+
+    override fun isSelected(date: LocalDate): Boolean {
+        return selected?.value?.let { date.isSelected(it) } ?: false
+    }
+
+    override fun onDateSelected(date: LocalDate) {
+        super.onDateSelected(date)
+        selected?.onClick(date)
+        selected?.value?.let { onStateUpdated?.invoke(it) }
+    }
+
+    private fun MutableState<Pair<LocalDate, LocalDate>>.onClick(date: LocalDate) {
+        value = with(value) {
+            when {
+                this == NO_RANGE || date.isBefore(first) -> date to LocalDate.MIN
+                date.isEqual(first) -> NO_RANGE
+                date.isBetween(this) || date.isAfterOrEqual(second) -> first to date
+                else -> value
+            }
         }
     }
+}
+
+@Composable
+fun rememberRangeSelectionState(
+    initial: Pair<LocalDate, LocalDate>?,
+    onDateSelected: DaySelection?,
+    onStateUpdated: DateStateUpdate<Pair<LocalDate, LocalDate>>?
+): RangeSelectionState = remember(initial) {
+    RangeSelectionState(initial, onDateSelected, onStateUpdated)
 }

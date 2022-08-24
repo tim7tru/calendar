@@ -15,7 +15,9 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.timmytruong.calendar.ui.screen.reusable.SelectedDatesText
 import com.timmytruong.calendar.ui.screen.util.showToast
 import com.timmytruong.library.calendar.HorizontalCalendarRange
-import com.timmytruong.library.calendar.selection.DateSelection
+import com.timmytruong.library.calendar.selection.rememberMultiSelectionState
+import com.timmytruong.library.calendar.selection.rememberRangeSelectionState
+import com.timmytruong.library.calendar.selection.rememberSingleSelectionState
 import com.timmytruong.library.core.CalendarTextData
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -40,6 +42,34 @@ fun HorizontalRangeCalendarScreen() {
         mutableStateOf(LocalDate.now())
     }
 
+    val selectedDates = remember {
+        mutableStateOf(listOf(LocalDate.now()))
+    }
+
+    val selectedRange = remember {
+        mutableStateOf(
+            LocalDate.of(now.year, now.month, 1) to LocalDate.of(now.year, now.month, 7)
+        )
+    }
+
+    val singleCalendarState = rememberSingleSelectionState(
+        initial = LocalDate.now(),
+        onDateSelected = { it.showToast(context) },
+        onStateUpdated = { selectedDate = it }
+    )
+
+    val multiCalendarState = rememberMultiSelectionState(
+        initial = selectedDates.value,
+        onDateSelected = { it.showToast(context) },
+        onStateUpdated = { selectedDates.value = it }
+    )
+
+    val rangeCalendarState = rememberRangeSelectionState(
+        initial = selectedRange.value,
+        onDateSelected = { it.showToast(context) },
+        onStateUpdated = { selectedRange.value = it }
+    )
+
     Column {
         HorizontalCalendarRange(
             range = YearMonth.of(now.year, 1) to YearMonth.of(now.year, 12),
@@ -47,11 +77,7 @@ fun HorizontalRangeCalendarScreen() {
             startingMonth = now,
             onMonthDayData = dayTextData,
             offMonthDayData = dayTextData.copy(textColor = MaterialTheme.colors.primary),
-            dateSelection = DateSelection.SingleDay(
-                initial = selectedDate,
-                onDaySelected = { it.showToast(context) },
-                onStateUpdated = { selectedDate = it }
-            ),
+            calendarState = multiCalendarState,
             titleData = CalendarTextData(fontWeight = FontWeight.Bold)
         )
 
@@ -63,7 +89,7 @@ fun HorizontalRangeCalendarScreen() {
         ) {
             SelectedDatesText()
             Text(
-                text = selectedDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
+                text = selectedDates.value.map { it.format(DateTimeFormatter.ISO_LOCAL_DATE) }.toString(),
                 fontSize = 20.sp,
                 color = MaterialTheme.colors.secondary,
             )
